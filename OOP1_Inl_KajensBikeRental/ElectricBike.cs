@@ -10,7 +10,7 @@ namespace OOP1_Inl_KajensBikeRental
         public bool lowBatteryWarning
         { get
             {
-                return (BatteryCharge > 30); // ej kontrollerad om rätt
+                return (BatteryCharge > 30); // ej kontrollerad om rätt !
             } 
         }
         public ElectricBike(decimal price) : base(price)
