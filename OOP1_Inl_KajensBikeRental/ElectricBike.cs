@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace OOP1_Inl_KajensBikeRental
+﻿namespace OOP1_Inl_KajensBikeRental
 {
     internal class ElectricBike : Vehicle
     {
@@ -31,11 +27,18 @@ namespace OOP1_Inl_KajensBikeRental
         }
         public void ReCharge()
         {
-        BatteryCharge = 100;    //I framtiden kanske detta bör ändras så den laddar viss % per timme.
+        BatteryCharge = 100;    //I framtiden kanske detta bör ändras så den laddar viss % per timme och ha en bool IsCharging när den är upptagen med att ladda (om den ska bli 100% innan uthyrning igen)
         }
         public void DeCharge(int hours)
         {
             BatteryCharge -= hours * 10;
+        }
+        public override void ShowInfo()
+        {
+            string rentStatus = "Ledig";
+            if (IsRented) rentStatus = "Uthyrd";
+            Console.WriteLine($"ID{Id,-3} {ModelName,-10} {Price} SEK/T{-7} | STATUS: {rentStatus} | Batteri {BatteryCharge}%");
+            if (lowBatteryWarning) Console.Write($"OBS! Lågt batteri, måste laddas innan uthyrning!");
         }
     }
 }
