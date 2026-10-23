@@ -33,6 +33,12 @@
         }
 
         public virtual void RentBike() => IsRented = true; //pilen är ett kortare sätt att sätta variabel ist för inom måsvingar.
-        public void ReturnBike() => IsRented = false;        
+        public void ReturnBike() => IsRented = false;      
+        public virtual void ShowInfo()
+        {
+            string rentStatus = "Ledig";
+            if (IsRented) rentStatus = "Uthyrd";
+            Console.WriteLine($"ID{Id, -3} {ModelName, -10} {Price} SEK/T{-7} | STATUS: {rentStatus}");
+        }
     }
 }
