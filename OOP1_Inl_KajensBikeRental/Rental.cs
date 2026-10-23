@@ -2,7 +2,7 @@
 {
     internal class Rental
     {
-        public int Id { get; private set; }
+        public int Id { get; private set; }                             //Måste jag koppla rental till en kund? Eller håller menyn reda på det? //ska hyrtiden vara med här? eller räknas ut i kassan?
         public List<Vehicle> rentalOrder { get; private set; } = []; //Vilka cyklar en person lånar stoppas in här
         public static List<Rental> rentalsHistory { get; private set; } = []; //historik över uthyrning
         public Rental() //när vi skapar en uthyrning skapar vi behållaren först och sen lägger in vad man hyr (tex så man kan hyra fler cyklar samtidigt senare och inte ett specifikt antal)
