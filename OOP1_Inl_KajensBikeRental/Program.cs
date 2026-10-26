@@ -49,9 +49,39 @@ while (run == true)
                 v.ShowInfo();
             }
             break;
+
         case "2":
+            Console.WriteLine("[2] - Registrera ny kund.");
+            Console.WriteLine("Ange kundens namn:");
+            string newCustomerName = Console.ReadLine();
+            Console.WriteLine("Ange ålder:");
+            int newCustomerAge;
+            while (!int.TryParse(Console.ReadLine(), out newCustomerAge) || newCustomerAge < 1 || newCustomerAge > 120)
+            {
+                Console.WriteLine("Ange ålder i heltal:");
+            }
+            if (newCustomerAge < 15)
+            {
+                Console.WriteLine("Kunden måste vara minst 15 år för att registreras, avbryter registrering.");
+            }
+            else if (newCustomerAge > 100)
+            {
+                Console.WriteLine("På grund av skaderisk får kunden inte vara över 100 år, avbryter registrering.");
+            }
+            else
+            {
+                Customer newCustomer = new Customer (newCustomerName, newCustomerAge);
+                newCustomer.AddMembership();
+                Console.WriteLine($"Kund {newCustomer.Name} med ålder {newCustomer.Age} har lagts till!");
+                Console.WriteLine($"Kunden har fått kundnummer: {newCustomer.CustomerNo}");
+                Console.WriteLine("OBS! Spara kundnumret och ange vid uthyrning så får kunden 10% rabatt!");
+                Console.WriteLine("Tryck för att fortsätta..");
+                Console.ReadLine();
+            }
+
 
             break;
+
         case "3":
 
             break;
