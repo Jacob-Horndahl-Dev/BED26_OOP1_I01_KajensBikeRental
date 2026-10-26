@@ -17,18 +17,19 @@
             rentalOrder.Add(v);
             //Sätta v.RentBike() här?
         }
-        public decimal Total(Rental r, int hours)
+        public decimal Total(int hours)
         {
-            decimal total = 0;
+            decimal total = 0m;
                 foreach (Vehicle v in rentalOrder)
                 {
-                    total = total + v.Price * hours;
+                    total += v.Price * hours;
                 }
              return total;
         }
-        public decimal Discount(bool isMember, int hours)
+        public decimal Discount(int hours)
         {
-            decimal discount = 0;
+            decimal discount = 0m;
+            bool isMember = RentalCustomer.IsMember; //kollar om kunden i uthyrningen är medlem
             if (isMember)
             {
                 foreach (Vehicle v in rentalOrder)
@@ -38,9 +39,9 @@
             }            
             return discount;
         }
-        public decimal Checkout(bool isMember, int hours)
+        public decimal Checkout(int hours)
         {
-            decimal finalTotal = Total() - Discount(isMember);
+            decimal finalTotal = Total(hours) - Discount(hours);
             return Math.Max(0, finalTotal);                  //Ifall det blir något fel med rabatter kan priset aldrig gå under noll
         }
     }

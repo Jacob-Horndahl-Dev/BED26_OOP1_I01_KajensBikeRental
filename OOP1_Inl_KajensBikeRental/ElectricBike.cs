@@ -40,8 +40,8 @@
             string rentStatus = "Ledig";
             if (IsRented) rentStatus = "Uthyrd";            
 
-            if (LowBatteryWarning) Console.WriteLine($"ID{Id,-3} {ModelName,-20} {Price} SEK/T | STATUS: {rentStatus} | Batteri {BatteryCharge}% OBS! Lågt batteri, måste laddas innan uthyrning!");
-            else Console.WriteLine($"ID{Id,-3} {ModelName,-20} {Price} SEK/T | STATUS: {rentStatus} | Batteri {BatteryCharge}%");
+            if (LowBatteryWarning) Console.WriteLine($"ID{Id,-3} {ModelName,-20} {Price} kr/h | STATUS: {rentStatus} | Batteri {BatteryCharge}% OBS! Lågt batteri, måste laddas innan uthyrning!");
+            else Console.WriteLine($"ID{Id,-3} {ModelName,-20} {Price} kr/h | STATUS: {rentStatus} | Batteri {BatteryCharge}%");
         }
     }
 }

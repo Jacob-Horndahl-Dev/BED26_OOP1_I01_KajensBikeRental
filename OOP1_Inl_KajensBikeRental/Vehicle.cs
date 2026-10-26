@@ -39,7 +39,7 @@
         {
             string rentStatus = "Ledig";
             if (IsRented) rentStatus = "Uthyrd";
-            Console.WriteLine($"ID{Id, -3} {ModelName, -20} {Price} SEK/T | STATUS: {rentStatus}");
+            Console.WriteLine($"ID{Id, -3} {ModelName, -20} {Price} kr/h | STATUS: {rentStatus}");
         }
     }
 }

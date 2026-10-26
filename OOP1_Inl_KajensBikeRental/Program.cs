@@ -16,22 +16,35 @@ Console.WriteLine("o/-o  K A J E N S  C Y K E L U T H Y R N I N G  o/-o");
 /// Testobjekt att starta med ///
 /// 
 
-new Bicycle("Mountainbike D-Trail");
+new Bicycle("Mountainbike D-Trail");        //Cyklar som finns i listan att hyra som default
 new Bicycle("Damcykel Crescent");
 new Bicycle("Hybrid ZJ600");
 new ElectricBike("City EC3900");
 new ElectricBike("Mountainbike Breeze");
 new ElectricBike("Lådcykel Carrier");
+
 Vehicle debugBike1 = Vehicle.vehicles[5];
-((ElectricBike)debugBike1).DeCharge(9);
-Vehicle debugBike2 = Vehicle.vehicles[1];
-debugBike2.RentBike();
-Customer debugMember1 = new Customer("Gabbro", 25);
+((ElectricBike)debugBike1).DeCharge(9);     //Laddar ur en elcykel för test.
+
+Customer debugMember1 = new Customer("Gabbro", 25);     //Två testkunder en över 18 och en under
 Customer debugMember2 = new Customer("Feldspar", 16);
 debugMember1.AddMembership();
 debugMember2.AddMembership();
-Console.WriteLine($"DEBUG: kundnummer >18: {debugMember1.CustomerNo}");
+
+Vehicle debugBike2 = Vehicle.vehicles[1];     //Lånar ut en cykel för testning.
+debugBike2.RentBike();
+Rental debugRental = new Rental(debugMember1);
+debugRental.RentVehicle(debugBike2);
+
+/*Vehicle debugBike3 = Vehicle.vehicles[3];     //Lånar ut en cykel till i samma order för testning.
+debugBike3.RentBike();
+debugRental.RentVehicle(debugBike3);*/
+
+Console.WriteLine($"DEBUG: kundnummer >18: {debugMember1.CustomerNo}");     //Skriver ut kundnumren som man kan testa att använda högst upp i programmet
 Console.WriteLine($"DEBUG: kundnummer <18: {debugMember2.CustomerNo}");
+
+/// Program RUN ///
+/// 
 
 bool run = true;
 while (run == true)
@@ -180,6 +193,8 @@ while (run == true)
             Rental newRental = new Rental(rentalCustomer);  //tidpunkten för uthyrning bör egentligen loggas här
             newRental.RentVehicle(choiceToRent);
             Console.WriteLine($"Uthyrningsnummer #{newRental.Id}");
+            Console.WriteLine("Tryck för att fortsätta...");
+            Console.ReadLine();
 
             break;
         case "4":
@@ -189,7 +204,7 @@ while (run == true)
             {
                 v.ShowInfo();
             }
-            Console.WriteLine("Skriv ID-numret på cykeln som ska hyras:");
+            Console.WriteLine("Skriv ID-numret på cykeln som ska återlämnas:");
             int returnIdChoice;
             while (!int.TryParse(Console.ReadLine(), out returnIdChoice))
             {
@@ -213,11 +228,35 @@ while (run == true)
                 break;
             }
             Console.WriteLine($"Du har valt att återlämna {choiceToReturn.Id} - {choiceToReturn.ModelName}");
+
             var rentalToReturn = Rental.rentalsHistory.FirstOrDefault(r => r.rentalOrder.Any(v => v.Id == choiceToReturn.Id)); //hämtar den senaste uthyrningen där den cykeln är med i, lite komplicerat!
+            if (rentalToReturn == null)
+            {
+                Console.WriteLine("Kunde inte hitta någon uthyrning kopplad till denna cykel.");
+                Console.WriteLine("Avbryter...");
+                break;
+            }
+
             Console.WriteLine($"Ordernr #{rentalToReturn.Id}"); //funktion för att hitta senaste ordern med den cykeln i
             Console.WriteLine("Hur många timmar har du haft cykeln?"); //Egentligen bör en date time funktion användas här tillammans med en som sätts när cykeln hyrs.
-
-
+            int rentedHours;
+            while(!int.TryParse(Console.ReadLine(), out rentedHours) || rentedHours < 0)
+            {
+                Console.WriteLine("Ange ett helt antal timmar:");
+            }            
+                Checkout.PrintReceipt(rentalToReturn, rentedHours); //skriver ut kvittot
+                Console.WriteLine("");
+            
+            foreach (Vehicle v in rentalToReturn.rentalOrder)   //lämnar tillbaka cyklar som hyrts
+            {
+                v.ReturnBike();
+            }
+            foreach (IChargeable ev in rentalToReturn.rentalOrder.OfType<IChargeable>()) //räknar ut hur mycket batteri som gått åt. Of type behövs för att inte vanliga cyklar ska krascha programmet
+            {
+                ev.DeCharge(rentedHours);
+            }
+            Console.WriteLine("Tryck för att fortsätta...");
+            Console.ReadLine();
             break;
 
         case "5":
