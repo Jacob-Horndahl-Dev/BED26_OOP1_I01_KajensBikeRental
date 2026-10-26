@@ -16,12 +16,14 @@ Console.WriteLine("o/-o  K A J E N S  C Y K E L U T H Y R N I N G  o/-o");
 /// Testobjekt att starta med ///
 /// 
 
-new Bicycle("Cykel Mountainbike");
-new Bicycle("Cykel Damcykel");
-new Bicycle("Cykel Hybrid");
-new ElectricBike("Elcykel City");
-new ElectricBike("Elcykel Mountainbike");
-new ElectricBike("Elcykel Lådcykel");
+new Bicycle("Mountainbike D-Trail");
+new Bicycle("Damcykel Crescent");
+new Bicycle("Hybrid ZJ600");
+new ElectricBike("City EC3900");
+new ElectricBike("Mountainbike Breeze");
+new ElectricBike("Lådcykel Carrier");
+Vehicle debugBike1 = Vehicle.vehicles[5];
+((ElectricBike)debugBike1).DeCharge(9);
 
 
 bool run = true;
@@ -44,7 +46,7 @@ while (run == true)
             Console.WriteLine("[1] - Visar alla cyklar:");
             foreach (Vehicle v in Vehicle.vehicles)
             {
-                v.ShowInfo(); //Fel formattering i metoden. Måste åtgärdas.
+                v.ShowInfo();
             }
             break;
         case "2":
@@ -56,12 +58,30 @@ while (run == true)
         case "4":
 
             break;
+
         case "5":
             Console.WriteLine("[5] - Ladda elcykel");
             Console.WriteLine("Vilken cykel ska laddas?");
-            var electricVehiclesList = Vehicle.vehicles.Select(ev => ev.ModelName.Contains("Elcykel")); //det här är ett dåligt sätt att göra det på, interface rechargeable??
+            //var electricVehiclesList = Vehicle.vehicles.Where(ev => ev.Type.Contains("Elcykel")).ToList(); //det här är sämre sätt att göra det på, interface rechargeable är bättre
+            var electricVehiclesList = Vehicle.vehicles.Where(ev => ev is IChargeable).ToList(); //listar alla laddbara fordon
             //lista alla cyklar och lägg till val för vilken som ska laddas.
+            for (int i = 0; i < electricVehiclesList.Count; i++)
+            {
+                Vehicle ev = electricVehiclesList[i]; //motsvarande Vehicle v i foreach loop
+                IChargeable chargeableEv = (IChargeable)ev; //måste casta till interfacet, annars fattar den inte att det är något som kan laddas (bara vehicle)
+
+                Console.WriteLine($"[{i+1}] {electricVehiclesList[i].ModelName, -20} | {chargeableEv.BatteryCharge}%");
+            }
+            int chargeChoice;
+            while(!int.TryParse(Console.ReadLine(), out chargeChoice) || chargeChoice < 1 || chargeChoice > electricVehiclesList.Count)
+                {
+                Console.WriteLine("Ange ett korrekt index med en siffra!");
+                }
+            chargeChoice --; //korrigerar användarens val till listindex
+            ((IChargeable)electricVehiclesList[chargeChoice]).ReCharge(); //ska cykeln gå att ladda om den är uthyrd?
+            Console.WriteLine($"{electricVehiclesList[chargeChoice].ModelName} har snabbladdats till {((IChargeable)electricVehiclesList[chargeChoice]).BatteryCharge}%!");
             break;
+
         case "6":
             Console.WriteLine("Avslutar programmet...");
             run = false;
