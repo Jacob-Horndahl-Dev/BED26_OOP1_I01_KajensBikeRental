@@ -24,6 +24,10 @@
             Age = age;
             customers.Add(this);
         }
+        public void UpdateMemberAge(int age)
+        {
+            Age = age;
+        }
         public void AddMembership()         //Jag tyckte det vore kul att slumpa fram kundnummer:
         {
             Random rnd = new Random();
