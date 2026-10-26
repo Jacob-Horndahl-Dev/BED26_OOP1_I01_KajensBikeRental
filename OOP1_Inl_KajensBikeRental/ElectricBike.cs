@@ -17,7 +17,7 @@
                 _batteryCharge = Math.Min(100, value); //Batteriet kan inte bli över 100% laddat. value är en inbyggd variabel som bara finns i set, tar värdet den får.
             }
         }
-        public bool lowBatteryWarning
+        public bool LowBatteryWarning
         { get
             {
                 return (BatteryCharge < 30); // OBS! True om lägre än 30%, alltså en varning.
@@ -40,7 +40,7 @@
             string rentStatus = "Ledig";
             if (IsRented) rentStatus = "Uthyrd";            
 
-            if (lowBatteryWarning) Console.WriteLine($"ID{Id,-3} {ModelName,-20} {Price} SEK/T | STATUS: {rentStatus} | Batteri {BatteryCharge}% OBS! Lågt batteri, måste laddas innan uthyrning!");
+            if (LowBatteryWarning) Console.WriteLine($"ID{Id,-3} {ModelName,-20} {Price} SEK/T | STATUS: {rentStatus} | Batteri {BatteryCharge}% OBS! Lågt batteri, måste laddas innan uthyrning!");
             else Console.WriteLine($"ID{Id,-3} {ModelName,-20} {Price} SEK/T | STATUS: {rentStatus} | Batteri {BatteryCharge}%");
         }
     }

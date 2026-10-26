@@ -24,7 +24,14 @@ new ElectricBike("Mountainbike Breeze");
 new ElectricBike("Lådcykel Carrier");
 Vehicle debugBike1 = Vehicle.vehicles[5];
 ((ElectricBike)debugBike1).DeCharge(9);
-
+Vehicle debugBike2 = Vehicle.vehicles[1];
+debugBike2.RentBike();
+Customer debugMember1 = new Customer("Gabbro", 25);
+Customer debugMember2 = new Customer("Feldspar", 16);
+debugMember1.AddMembership();
+debugMember2.AddMembership();
+Console.WriteLine($"DEBUG: kundnummer >18: {debugMember1.CustomerNo}");
+Console.WriteLine($"DEBUG: kundnummer <18: {debugMember2.CustomerNo}");
 
 bool run = true;
 while (run == true)
@@ -78,14 +85,138 @@ while (run == true)
                 Console.WriteLine("Tryck för att fortsätta..");
                 Console.ReadLine();
             }
-
-
             break;
 
         case "3":
+            Console.WriteLine("[3] - Uthyrning.");
+            Console.WriteLine("Vilken cykel ska hyras ut?");
+            foreach (Vehicle v in Vehicle.vehicles)
+            {
+                v.ShowInfo();
+            }
+            Console.WriteLine("Skriv ID-numret på cykeln som ska hyras:");
+            int rentalIdChoice;
+            while(!int.TryParse(Console.ReadLine(), out rentalIdChoice))
+            {
+                Console.WriteLine("Du måste ange ett heltal:");
+            }
+            string rentalIdSearchString = rentalIdChoice.ToString();    //Gick inte att använda contains utan att göra om till string
+            var choiceToRent = Vehicle.vehicles
+                .Where(v => v.Id
+                .ToString()
+                .EndsWith(rentalIdSearchString)) //ends with istället för contains, annars kan den råka ta årtalet 26 istället för cykel 002
+                .FirstOrDefault(); //Tar första matchningen ifall hittar flera
+            if (choiceToRent == null)
+            {
+                Console.WriteLine("Ingen cykel med angivet ID hittades.");
+                Console.WriteLine("Återgår till menyn.");
+                break;
+            }                
+            if (choiceToRent.IsRented)
+            {
+                Console.WriteLine($"{choiceToRent.Id} - {choiceToRent.ModelName} är redan uthyrd, välj en annan cykel.");
+                break;
+            }
+            else if (choiceToRent is IChargeable chargeableVehicle && chargeableVehicle.LowBatteryWarning) //kontrollerar om valt fordon är laddbart, om den inte är det kollar den inte batterinivån.
+            {
+                Console.WriteLine($"{choiceToRent.Id} - {choiceToRent.ModelName} har för lågt batteri, ladda, byt batteri eller välj en annan cykel.");
+                break;
+            }            
+            Console.WriteLine($"Du har valt {choiceToRent.Id} - {choiceToRent.ModelName}");
+            Console.WriteLine("Är kunden medlem? j/n");
+            var rentalCustomer = new Customer("Ej medlem", 0);
+            string rentMemberOrNonMember = Console.ReadLine().ToLower().Trim();
+            switch (rentMemberOrNonMember)
+            {
+                case "j":
+                case "ja":
+                case "y":
+                case "yes":
+                    Console.WriteLine("Ange medlemsnummer (ÅÅXXXX):");                    
+                    int memberNoSearch;
+                    while (!int.TryParse(Console.ReadLine(), out memberNoSearch) || memberNoSearch == 0)
+                    {
+                        Console.WriteLine("Du måste ange ett sexsiffrigt nummer (ÅÅNNNN):");
+                    }
+                    rentalCustomer = Customer.customers.Where(c => c.CustomerNo == memberNoSearch).FirstOrDefault();
+                    if (rentalCustomer == null)
+                    {
+                        Console.WriteLine("Kundnummer kunde ej hittas.");
+                        Console.WriteLine("Fortsätter utan medlemskap...");
+                        goto default;
+                    }
+                    if (!rentalCustomer.Is18 && choiceToRent is IChargeable)
+                    {
+                        Console.WriteLine("Tyvärr är det 18-årsgräns på elcyklar, välj en annan cykel.");
+                        continue;
+                    }                    
+                    break;
+                default:
+                    //Om man inte är medlem görs default non member här + ålderskontroll för icke medlem
+                    Console.WriteLine("Uthyrning utan medlemsskap.");
+                    Console.WriteLine("Hur gammal är du?");
+                    int nonMemberAge;
+                    while (!int.TryParse(Console.ReadLine(), out nonMemberAge) || nonMemberAge < 1 || nonMemberAge > 120)
+                    {
+                        Console.WriteLine("Ange ålder i heltal:");
+                    }
+                    if (nonMemberAge >= 15 && nonMemberAge < 18 && choiceToRent is IChargeable)
+                    {
+                        Console.WriteLine("Tyvärr är det 18-årsgräns på elcyklar, välj en annan cykel.");
+                        continue;
+                    }
+                    else if (nonMemberAge < 15)
+                    {
+                        Console.WriteLine("Du måste tyvärr vara minst 15 år för att hyra en cykel och 18 år för att hyra en elcykel.");
+                        continue;
+                    }
+                    rentalCustomer.UpdateMemberAge(nonMemberAge);
+                    break;
+            }
+            Console.WriteLine($"Toppen! Du har lånat {choiceToRent.ModelName}.");
+            Console.WriteLine($"Pris {choiceToRent.Price} kr/h");
+            Console.WriteLine("Din kostnad räknas ut när du återlämnar cykeln, ha en trevlig tur!");
+            choiceToRent.RentBike();            
+            Rental newRental = new Rental(rentalCustomer);  //tidpunkten för uthyrning bör egentligen loggas här
+            newRental.RentVehicle(choiceToRent);
+            Console.WriteLine($"Uthyrningsnummer #{newRental.Id}");
 
             break;
         case "4":
+            Console.WriteLine("[4] - Återlämning & betalning");
+            Console.WriteLine("Vilken cykel ska lämnas tillbaka?");
+            foreach (Vehicle v in Vehicle.vehicles)
+            {
+                v.ShowInfo();
+            }
+            Console.WriteLine("Skriv ID-numret på cykeln som ska hyras:");
+            int returnIdChoice;
+            while (!int.TryParse(Console.ReadLine(), out returnIdChoice))
+            {
+                Console.WriteLine("Du måste ange ett heltal:");
+            }
+            string returnIdSearchString = returnIdChoice.ToString();    //Gick inte att använda contains utan att göra om till string
+            var choiceToReturn = Vehicle.vehicles
+                .Where(v => v.Id
+                .ToString()
+                .EndsWith(returnIdSearchString)) //ends with istället för contains, annars kan den råka ta årtalet 26 istället för cykel 002
+                .FirstOrDefault(); //Tar första matchningen ifall hittar flera
+            if (choiceToReturn == null)
+            {
+                Console.WriteLine("Ingen cykel med angivet ID hittades.");
+                Console.WriteLine("Återgår till menyn.");
+                break;
+            }
+            if (!choiceToReturn.IsRented)
+            {
+                Console.WriteLine($"{choiceToReturn.Id} - {choiceToReturn.ModelName} är inte uthyrd, välj en annan cykel.");
+                break;
+            }
+            Console.WriteLine($"Du har valt att återlämna {choiceToReturn.Id} - {choiceToReturn.ModelName}");
+            var rentalToReturn = Rental.rentalsHistory.FirstOrDefault(r => r.rentalOrder.Any(v => v.Id == choiceToReturn.Id)); //hämtar den senaste uthyrningen där den cykeln är med i, lite komplicerat!
+            Console.WriteLine($"Ordernr #{rentalToReturn.Id}"); //funktion för att hitta senaste ordern med den cykeln i
+            Console.WriteLine("Hur många timmar har du haft cykeln?"); //Egentligen bör en date time funktion användas här tillammans med en som sätts när cykeln hyrs.
+
 
             break;
 
