@@ -6,7 +6,7 @@
         public int Age { get; private set; } //hmm denna borde uppdateras med tiden
         public bool Is15 => Age >= 15;
         public bool Is18 => Age >= 18;
-        public int CustomerNo { get; private set; } = 0000;
+        public int CustomerNo { get; private set; } = 000000; //format YYXXXX
         public bool IsMember => CustomerNo > 0; //koden gick att förenkla. boolen kontrolleras varje gång egenskapen anropas.
         /*{
             get
