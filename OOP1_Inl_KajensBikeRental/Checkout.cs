@@ -2,7 +2,7 @@
 {
     internal class Checkout
     {
-        public static void PrintReceipt(Rental r,int rentTime) //Stoppa in en kund istället för bool?
+        public static void PrintReceipt(Rental r,int rentTime)
         {
             Console.WriteLine($"\n   --- KVITTO #{r.Id} ---");
             Console.WriteLine("-----------------------");
@@ -13,11 +13,16 @@
                 Console.WriteLine($"Pris: {rentTime}h á {v.Price} kr/h : {v.Price * rentTime} kr");              
             }
             Console.WriteLine("-----------------------");
+            Console.WriteLine($"Medlem: {r.RentalCustomer.Name} | Kundnummer: {r.RentalCustomer.CustomerNo}");
             Console.WriteLine($"Rabatt: {r.Discount(rentTime):F2} kr");
             Console.WriteLine($"Att betala: {r.Checkout(rentTime):F2} kr");
             Console.WriteLine($"Moms 25% {r.Checkout(rentTime) * 0.25m:F2} kr");
             Console.WriteLine("-----------------------");
             Console.WriteLine("Välkommen åter!");
+            Console.WriteLine("");
+            Console.WriteLine("Kajens cykeluthyrning AB");
+            Console.WriteLine("Org: 5555 3333 4444 8888");
+            Console.WriteLine("-----------------------");
         }
     }
 }

@@ -33,8 +33,13 @@ debugMember2.AddMembership();
 
 Vehicle debugBike2 = Vehicle.vehicles[1];     //Lånar ut en cykel för testning.
 debugBike2.RentBike();
-Rental debugRental = new Rental(debugMember1);
+Rental debugRental = new Rental(debugMember2);
 debugRental.RentVehicle(debugBike2);
+
+Vehicle debugBike4 = Vehicle.vehicles[3];     //Lånar ut en cykel för testning.
+debugBike4.RentBike();
+Rental debugRental2 = new Rental(debugMember1);
+debugRental.RentVehicle(debugBike4);
 
 /*Vehicle debugBike3 = Vehicle.vehicles[3];     //Lånar ut en cykel till i samma order för testning.
 debugBike3.RentBike();
@@ -94,7 +99,7 @@ while (run == true)
                 newCustomer.AddMembership();
                 Console.WriteLine($"Kund {newCustomer.Name} med ålder {newCustomer.Age} har lagts till!");
                 Console.WriteLine($"Kunden har fått kundnummer: {newCustomer.CustomerNo}");
-                Console.WriteLine("OBS! Spara kundnumret och ange vid uthyrning så får kunden 10% rabatt!");
+                Console.WriteLine("OBS! Kunden måste spara kundnumret och ange vid uthyrning för att få 10% rabatt!");
                 Console.WriteLine("Tryck för att fortsätta..");
                 Console.ReadLine();
             }
@@ -107,7 +112,7 @@ while (run == true)
             {
                 v.ShowInfo();
             }
-            Console.WriteLine("Skriv ID-numret på cykeln som ska hyras:");
+            Console.WriteLine("Skriv ID-numret på cykeln som ska hyras ut:");
             int rentalIdChoice;
             while(!int.TryParse(Console.ReadLine(), out rentalIdChoice))
             {
@@ -167,7 +172,7 @@ while (run == true)
                 default:
                     //Om man inte är medlem görs default non member här + ålderskontroll för icke medlem
                     Console.WriteLine("Uthyrning utan medlemsskap.");
-                    Console.WriteLine("Hur gammal är du?");
+                    Console.WriteLine("Hur gammal är kunden?");
                     int nonMemberAge;
                     while (!int.TryParse(Console.ReadLine(), out nonMemberAge) || nonMemberAge < 1 || nonMemberAge > 120)
                     {
@@ -180,15 +185,15 @@ while (run == true)
                     }
                     else if (nonMemberAge < 15)
                     {
-                        Console.WriteLine("Du måste tyvärr vara minst 15 år för att hyra en cykel och 18 år för att hyra en elcykel.");
+                        Console.WriteLine("Kunden måste tyvärr vara minst 15 år för att hyra en cykel och 18 år för att hyra en elcykel.");
                         continue;
                     }
                     rentalCustomer.UpdateMemberAge(nonMemberAge);
                     break;
             }
-            Console.WriteLine($"Toppen! Du har lånat {choiceToRent.ModelName}.");
+            Console.WriteLine($"Toppen! Kunden \"{rentalCustomer.Name}\" har lånat {choiceToRent.ModelName}.");
             Console.WriteLine($"Pris {choiceToRent.Price} kr/h");
-            Console.WriteLine("Din kostnad räknas ut när du återlämnar cykeln, ha en trevlig tur!");
+            Console.WriteLine("Kundens kostnad räknas ut vid återlämning av cykeln, ha en trevlig tur!");
             choiceToRent.RentBike();            
             Rental newRental = new Rental(rentalCustomer);  //tidpunkten för uthyrning bör egentligen loggas här
             newRental.RentVehicle(choiceToRent);
@@ -227,7 +232,7 @@ while (run == true)
                 Console.WriteLine($"{choiceToReturn.Id} - {choiceToReturn.ModelName} är inte uthyrd, välj en annan cykel.");
                 break;
             }
-            Console.WriteLine($"Du har valt att återlämna {choiceToReturn.Id} - {choiceToReturn.ModelName}");
+            Console.WriteLine($"Återlämning av {choiceToReturn.Id} - {choiceToReturn.ModelName}");
 
             var rentalToReturn = Rental.rentalsHistory.FirstOrDefault(r => r.rentalOrder.Any(v => v.Id == choiceToReturn.Id)); //hämtar den senaste uthyrningen där den cykeln är med i, lite komplicerat!
             if (rentalToReturn == null)
@@ -237,8 +242,8 @@ while (run == true)
                 break;
             }
 
-            Console.WriteLine($"Ordernr #{rentalToReturn.Id}"); //funktion för att hitta senaste ordern med den cykeln i
-            Console.WriteLine("Hur många timmar har du haft cykeln?"); //Egentligen bör en date time funktion användas här tillammans med en som sätts när cykeln hyrs.
+            Console.WriteLine($"Ordernr #{rentalToReturn.Id} | Kund: {rentalToReturn.RentalCustomer.Name}");
+            Console.WriteLine("Hur många timmar har kunden haft cykeln?"); //Egentligen bör en date time funktion användas här tillammans med en som sätts när cykeln hyrs.
             int rentedHours;
             while(!int.TryParse(Console.ReadLine(), out rentedHours) || rentedHours < 0)
             {
