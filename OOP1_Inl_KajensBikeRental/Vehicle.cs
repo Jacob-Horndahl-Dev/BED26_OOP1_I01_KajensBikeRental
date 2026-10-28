@@ -18,7 +18,7 @@
             }
         }*/
 
-        public bool IsRented { get; private set; } = false; //kanske måste ha protected här, vi får se
+        public bool IsRented { get; private set; } = false;
         public static List<Vehicle> vehicles { get; private set; } = []; //Lista med alla cyklar. Static = gemensam för alla objekt i klassen.
 
         public Vehicle(string modelName) //det enda man behöver för att skapa en vehicle är namn, resten sköts automatiskt.
